@@ -49,7 +49,7 @@ void OffboardControlMinimal::timer_callback()
 {
   // Continuously publish trajectory setpoint (hovering at -2.5m)
   // This MUST be published before switching to offboard mode
-  // publish_trajectory_setpoint();
+  publish_trajectory_setpoint();
 
   // Always publish offboard control heartbeat
   publish_offboard_control_mode();
