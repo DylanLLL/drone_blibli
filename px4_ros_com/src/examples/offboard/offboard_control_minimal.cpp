@@ -54,20 +54,20 @@ void OffboardControlMinimal::timer_callback()
   // Always publish offboard control heartbeat
   publish_offboard_control_mode();
 
-  if (offboard_setpoint_counter_ == 10)
+  if (offboard_setpoint_counter_ == 20)
   {
     // After sending 10 setpoints, engage offboard mode
     this->publish_vehicle_command(VehicleCommand::VEHICLE_CMD_DO_SET_MODE, 1, 6);
     RCLCPP_INFO(this->get_logger(), "Switching to OFFBOARD mode");
   }
 
-  if (offboard_setpoint_counter_ == 11)
+  if (offboard_setpoint_counter_ == 25)
   {
     // Arm after offboard mode is engaged
     this->arm();
   }
 
-  if (offboard_setpoint_counter_ < 12)
+  if (offboard_setpoint_counter_ < 30)
   {
     offboard_setpoint_counter_++;
   }
@@ -89,7 +89,7 @@ void OffboardControlMinimal::publish_offboard_control_mode()
 {
   OffboardControlMode msg{};
   msg.position = true;
-  msg.velocity = true;
+  msg.velocity = false;
   msg.acceleration = false;
   msg.attitude = false;
   msg.body_rate = false;
@@ -100,8 +100,12 @@ void OffboardControlMinimal::publish_offboard_control_mode()
 void OffboardControlMinimal::publish_trajectory_setpoint()
 {
   TrajectorySetpoint msg{};
-  msg.position = { 0.0, 0.0, -2.5 };  // NED frame: x=0, y=0, z=-2.5m (2.5m above ground)
-  msg.yaw = 0.0;                      // radians
+  msg.position = { 0.0f, 0.0f, -2.5f };
+  msg.velocity = { NAN, NAN, NAN };
+  msg.acceleration = { NAN, NAN, NAN };
+  msg.jerk = { NAN, NAN, NAN };
+  msg.yaw = 0.0f;
+  // msg.yawspeed = NAN;
   msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
   trajectory_setpoint_publisher_->publish(msg);
 }
